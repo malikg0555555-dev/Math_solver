@@ -6,17 +6,12 @@ import sys
 print("Python version:", sys.version)
 print("Starting Math Solver Server...")
 
-# Serve frontend folder
 app = Flask(__name__, static_folder="frontend", static_url_path="")
 CORS(app)  # Enable CORS
 
-# Create symbols
 x = sp.Symbol('x')
-y = sp.Symbol('y')
 
-# ==============================
-# FRONTEND ROUTES
-# ==============================
+# ===== FRONTEND ROUTES =====
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
@@ -25,18 +20,12 @@ def serve_frontend():
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
-# ==============================
-# API ROUTES
-# ==============================
+# ===== API =====
 @app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health():
     if request.method == 'OPTIONS':
         return '', 200
-    return jsonify({
-        'status': 'healthy',
-        'message': 'Math Solver API is running!',
-        'sympy_version': str(sp.__version__)
-    })
+    return jsonify({'status':'healthy','message':'Math Solver API is running!','sympy_version': str(sp.__version__)})
 
 @app.route('/api/solve', methods=['POST', 'OPTIONS'])
 def solve():
@@ -44,74 +33,32 @@ def solve():
         return '', 200
     try:
         data = request.json
-        print("Received request:", data)
-
-        problem_type = data.get('type', 'equation')
-
-        if problem_type == 'equation':
-            equation = data.get('expression', '')
-            result = solve_equation(equation)
-        else:
-            result = {
-                'success': False,
-                'message': f'Type {problem_type} not implemented'
-            }
-
-        return jsonify(result)
-
+        problem_type = data.get('type','equation')
+        if problem_type=='equation':
+            equation = data.get('expression','')
+            return jsonify(solve_equation(equation))
+        return jsonify({'success': False, 'message': f'Type {problem_type} not implemented'})
     except Exception as e:
-        print("Error:", str(e))
-        return jsonify({
-            'success': False,
-            'message': f'Server error: {str(e)}'
-        })
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'})
 
-# ==============================
-# SOLVER FUNCTION
-# ==============================
+# ===== SOLVER FUNCTION =====
 def solve_equation(equation):
     try:
-        print(f"Solving: {equation}")
         if '=' in equation:
             left, right = equation.split('=')
             expr = sp.sympify(left) - sp.sympify(right)
         else:
             expr = sp.sympify(equation)
-
         solutions = sp.solve(expr, x)
-
         if solutions:
-            solution_strs = [str(sol) for sol in solutions]
-            return {
-                'success': True,
-                'type': 'equation',
-                'input': equation,
-                'solutions': solution_strs,
-                'message': f'Solution(s): {", ".join(solution_strs)}'
-            }
-        else:
-            return {
-                'success': False,
-                'type': 'equation',
-                'message': 'No solution found'
-            }
-
+            return {'success': True, 'type':'equation', 'input': equation, 'solutions':[str(s) for s in solutions], 'message': f'Solution(s): {", ".join([str(s) for s in solutions])}'}
+        return {'success': False, 'type':'equation','message':'No solution found'}
     except Exception as e:
-        print("Solve Error:", str(e))
-        return {
-            'success': False,
-            'type': 'equation',
-            'message': f'Error: {str(e)}'
-        }
+        return {'success': False, 'type':'equation','message': f'Error: {str(e)}'}
 
-# ==============================
-# MAIN (Local Testing Only)
-# ==============================
+# ===== LOCAL TEST =====
 if __name__ == '__main__':
-    print("="*50)
-    print("Math Solver API Server (Local)")
-    print("="*50)
-    app.run(debug=True)  # Do NOT set host or port for Vercel
+    app.run(debug=True)  # No host/port for Vercel
 
 # ✅ For deployment (Vercel / Render / etc.)
 handler = app
