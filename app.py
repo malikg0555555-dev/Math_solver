@@ -1,52 +1,69 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sympy as sp
 import sys
+import os
 
 print("Python version:", sys.version)
 print("Starting Math Solver Server...")
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# ✅ Connect frontend folder
+app = Flask(__name__, static_folder="frontend", static_url_path="")
+CORS(app)
 
 # Create symbols
 x = sp.Symbol('x')
 y = sp.Symbol('y')
 
+# ==============================
+# ✅ FRONTEND ROUTES
+# ==============================
+
+@app.route('/')
+def serve_frontend():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
+
+# ==============================
+# ✅ API ROUTES
+# ==============================
+
 @app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health():
-    """Simple health check endpoint"""
     if request.method == 'OPTIONS':
         return '', 200
+
     return jsonify({
         'status': 'healthy',
         'message': 'Math Solver API is running!',
-        'timestamp': str(sp.__version__)
+        'sympy_version': str(sp.__version__)
     })
 
 @app.route('/api/solve', methods=['POST', 'OPTIONS'])
 def solve():
-    """Solve mathematical problems"""
     if request.method == 'OPTIONS':
         return '', 200
-    
+
     try:
         data = request.json
         print("Received request:", data)
-        
+
         problem_type = data.get('type', 'equation')
-        
+
         if problem_type == 'equation':
             equation = data.get('expression', '')
             result = solve_equation(equation)
         else:
             result = {
                 'success': False,
-                'message': f'Type {problem_type} not implemented in this version'
+                'message': f'Type {problem_type} not implemented'
             }
-        
+
         return jsonify(result)
-        
+
     except Exception as e:
         print("Error:", str(e))
         return jsonify({
@@ -54,26 +71,31 @@ def solve():
             'message': f'Server error: {str(e)}'
         })
 
+# ==============================
+# ✅ SOLVER FUNCTION
+# ==============================
+
 def solve_equation(equation):
-    """Solve algebraic equations"""
     try:
-        print(f"Solving equation: {equation}")
-        
-        # Parse the equation
+        print(f"Solving: {equation}")
+
+        # Parse equation
         if '=' in equation:
             left, right = equation.split('=')
             expr = sp.sympify(left) - sp.sympify(right)
         else:
             expr = sp.sympify(equation)
-        
+
         # Solve for x
         solutions = sp.solve(expr, x)
-        
+
         if solutions:
             solution_strs = [str(sol) for sol in solutions]
+
             return {
                 'success': True,
                 'type': 'equation',
+                'input': equation,
                 'solutions': solution_strs,
                 'message': f'Solution(s): {", ".join(solution_strs)}'
             }
@@ -83,43 +105,27 @@ def solve_equation(equation):
                 'type': 'equation',
                 'message': 'No solution found'
             }
-            
+
     except Exception as e:
-        print(f"Error solving equation: {str(e)}")
+        print("Solve Error:", str(e))
         return {
             'success': False,
             'type': 'equation',
             'message': f'Error: {str(e)}'
         }
 
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify({
-        'name': 'Math Solver API',
-        'version': '1.0',
-        'endpoints': {
-            'health': '/api/health',
-            'solve': '/api/solve (POST)'
-        },
-        'example': {
-            'url': '/api/solve',
-            'method': 'POST',
-            'body': {
-                'type': 'equation',
-                'expression': '2*x + 5 = 15'
-            }
-        }
-    })
+# ==============================
+# ✅ MAIN
+# ==============================
 
 if __name__ == '__main__':
     print("=" * 50)
     print("Math Solver API Server")
     print("=" * 50)
-    print("Server will run on: http://127.0.0.1:5000")
-    print("Test health: http://127.0.0.1:5000/api/health")
-    print("Test equation: POST to /api/solve")
+    print("Open in browser: http://127.0.0.1:5000")
+    print("Health check: http://127.0.0.1:5000/api/health")
     print("=" * 50)
-    
+
     try:
         app.run(
             host='127.0.0.1',
@@ -130,3 +136,6 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"Failed to start server: {e}")
         input("Press Enter to exit...")
+
+# ✅ For deployment (Vercel / Render etc.)
+handler = app
