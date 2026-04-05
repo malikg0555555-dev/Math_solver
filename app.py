@@ -119,23 +119,15 @@ def solve_equation(equation):
 # ==============================
 
 if __name__ == '__main__':
+    # Local testing only
     print("=" * 50)
-    print("Math Solver API Server")
+    print("Math Solver API Server (Local)")
     print("=" * 50)
     print("Open in browser: http://127.0.0.1:5000")
     print("Health check: http://127.0.0.1:5000/api/health")
     print("=" * 50)
 
-    try:
-        app.run(
-            host='127.0.0.1',
-            port=5000,
-            debug=True,
-            use_reloader=False
-        )
-    except Exception as e:
-        print(f"Failed to start server: {e}")
-        input("Press Enter to exit...")
+    app.run(debug=True)  # Let Flask choose host and port automatically
 
 # ✅ For deployment (Vercel / Render etc.)
 handler = app
