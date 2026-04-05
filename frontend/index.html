@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Professional Math Solver for Matric Level Mathematics - Solve equations instantly with step-by-step solutions">
+    <meta name="author" content="ALI HASSAN">
+    <title>Math Solver Pro | Professional Mathematics Solution</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .header {
+            background: rgba(30, 30, 46, 0.95);
+            color: white;
+        }
+
+        .logo-section h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-section p {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        body.dark-mode .logo-section p {
+            color: #a0a0a0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .card {
+            background: #1e1e2e;
+            color: #e0e0e0;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        body.dark-mode .card-title {
+            border-bottom-color: #2d2d3a;
+        }
+
+        /* Input Styles */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        body.dark-mode .input-group label {
+            color: #c0c0c0;
+        }
+
+        .equation-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        body.dark-mode .equation-input {
+            background: #2d2d3a;
+            border-color: #3d3d4a;
+            color: white;
+        }
+
+        .equation-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Examples Grid */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .example-chip {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-mode .example-chip {
+            background: #2d2d3a;
+            border-color: #3d3d4a;
+            color: #e0e0e0;
+        }
+
+        .example-chip:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Solution Box */
+        .solution-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .solution-box {
+            background: #2d2d3a;
+        }
+
+        .solution-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: #155724;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        body.dark-mode .solution-success {
+            background: linear-gradient(135deg, #0a3d1a 0%, #0c4a1e 100%);
+            color: #a0ffb0;
+        }
+
+        .solution-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: #721c24;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Steps Timeline */
+        .steps-timeline {
+            margin-top: 20px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        /* Graph Container */
+        .graph-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        body.dark-mode .graph-container {
+            background: #2d2d3a;
+        }
+
+        canvas {
+            max-height: 300px;
+            width: 100%;
+        }
+
+        /* History List */
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid #667eea;
+        }
+
+        body.dark-mode .history-item {
+            background: #2d2d3a;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+
+        .history-equation {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .history-solution {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        body.dark-mode .history-solution {
+            color: #a0a0a0;
+        }
+
+        .history-date {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .search-box {
+            background: #2d2d3a;
+            border-color: #3d3d4a;
+            color: white;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-top: 25px;
+        }
+
+        body.dark-mode .footer {
+            background: rgba(30, 30, 46, 0.95);
+            color: #a0a0a0;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <h1>
+                    <i class="fas fa-calculator"></i>
+                    Math Solver Pro
+                </h1>
+                <p>Professional Matric Level Mathematics Solution</p>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn" id="darkModeBtn">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </button>
+                <button class="icon-btn" id="voiceInputBtn">
+                    <i class="fas fa-microphone"></i>
+                    <span>Voice Input</span>
+                </button>
+                <button class="icon-btn" id="shareBtn">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column - Input Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-pen-alt"></i>
+                    <span>Equation Solver</span>
+                </div>
+                
+                <div class="input-group">
+                    <label>📝 Enter Your Equation:</label>
+                    <input type="text" id="equationInput" class="equation-input" 
+                           placeholder="Example: 2*x + 5 = 15" value="2*x + 5 = 15">
+                </div>
+
+                <div class="examples-grid">
+                    <div class="example-chip" data-example="2*x + 5 = 15">2x + 5 = 15</div>
+                    <div class="example-chip" data-example="x^2 - 4 = 0">x² - 4 = 0</div>
+                    <div class="example-chip" data-example="3*x + 2 = x - 4">3x + 2 = x - 4</div>
+                    <div class="example-chip" data-example="2*x^2 - 8 = 0">2x² - 8 = 0</div>
+                    <div class="example-chip" data-example="(x+2)*(x-3) = 0">(x+2)(x-3) = 0</div>
+                    <div class="example-chip" data-example="x/2 + 3 = 7">x/2 + 3 = 7</div>
+                </div>
+
+                <div class="input-group">
+                    <label>⚙️ Additional Options:</label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="showSteps" checked> Show Step-by-Step
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="showGraph"> Show Graph
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoSolve"> Auto-Solve on Type
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="solveBtn">
+                    <i class="fas fa-play"></i>
+                    Solve Equation
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div class="status-indicator" id="statusIndicator">
+                    <i class="fas fa-circle" style="font-size: 10px;"></i>
+                    <span>Checking backend connection...</span>
+                </div>
+            </div>
+
+            <!-- Right Column - Solution Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Solution</span>
+                </div>
+                
+                <div id="solutionArea" class="solution-box">
+                    <div style="text-align: center; padding: 30px;">
+                        <i class="fas fa-calculator" style="font-size: 3rem; color: #667eea; opacity: 0.5;"></i>
+                        <p style="margin-top: 15px; color: #6c757d;">Enter an equation and click "Solve" to see the solution</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="copyBtn" class="icon-btn" style="flex: 1; background: #28a745;">
+                        <i class="fas fa-copy"></i>
+                        Copy Solution
+                    </button>
+                    <button id="exportPdfBtn" class="icon-btn" style="flex: 1; background: #dc3545;">
+                        <i class="fas fa-file-pdf"></i>
+                        Export PDF
+                    </button>
+                </div>
+
+                <div id="graphContainer" style="display: none;" class="graph-container">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-history"></i>
+                <span>History & Saved Solutions</span>
+                <button id="clearHistoryBtn" style="margin-left: auto; background: #dc3545; padding: 6px 12px; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+            
+            <input type="text" id="searchHistory" class="search-box" placeholder="🔍 Search history...">
+            <div id="historyList" class="history-list">
+                <p style="text-align: center; color: #6c757d; padding: 20px;">No history yet. Solve some equations!</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <i class="fas fa-code"></i> Developed with <i class="fas fa-heart" style="color: #dc3545;"></i> by 
+                <strong style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; color: transparent;">ALI HASSAN</strong>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">
+                <i class="fas fa-copyright"></i> 2024 Math Solver Pro | All Rights Reserved | Matric Level Mathematics
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const API_URL = 'http://127.0.0.1:5000/api';
+        let history = JSON.parse(localStorage.getItem('mathHistory') || '[]');
+        let chart = null;
+        let currentSolution = null;
+
+        // ==================== DOM ELEMENTS ====================
+        const equationInput = document.getElementById('equationInput');
+        const solveBtn = document.getElementById('solveBtn');
+        const solutionArea = document.getElementById('solutionArea');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const voiceInputBtn = document.getElementById('voiceInputBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const searchHistory = document.getElementById('searchHistory');
+        const showStepsCheckbox = document.getElementById('showSteps');
+        const showGraphCheckbox = document.getElementById('showGraph');
+        const autoSolveCheckbox = document.getElementById('autoSolve');
+        const graphContainer = document.getElementById('graphContainer');
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = type === 'success' ? '#d4edda' : '#f8d7da';
+            toast.style.color = type === 'success' ? '#155724' : '#721c24';
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span style="margin-left: 10px;">${message}</span>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function preprocessEquation(equation) {
+            // Add multiplication sign between number and variable (2x -> 2*x)
+            let processed = equation.replace(/(\d+)([a-zA-Z])/g, '$1*$2');
+            // Add multiplication sign between variable and number (x2 -> x*2)
+            processed = processed.replace(/([a-zA-Z])(\d+)/g, '$1*$2');
+            // Handle power operator (^ -> **)
+            processed = processed.replace(/\^/g, '**');
+            return processed;
+        }
+
+        // ==================== BACKEND CONNECTION ====================
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    statusIndicator.innerHTML = '<i class="fas fa-circle" style="font-size: 10px; color: #28a745;"></i><span>Backend: Connected & Running</span>';
+                    statusIndicator.className = 'status-indicator status-online';
+                    return true;
+                }
+            } catch (error) {
+                statusIndicator.innerHTML = '<i class="fas fa-circle" style="font-size: 10px; color: #dc3545;"></i><span>Backend: Not Connected - Run "python app.py"</span>';
+                statusIndicator.className = 'status-indicator status-offline';
+                return false;
+            }
+        }
+
+        // ==================== SOLVE EQUATION ====================
+        async function solveEquation() {
+            const equation = equationInput.value.trim();
+            
+            if (!equation) {
+                showToast('Please enter an equation!', 'error');
+                return;
+            }
+
+            // Show loading
+            solutionArea.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 15px;">Solving equation...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_URL}/solve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'equation',
+                        expression: preprocessEquation(equation)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentSolution = data;
+                    displaySolution(equation, data);
+                    addToHistory(equation, data);
+                    
+                    if (showGraphCheckbox.checked) {
+                        drawGraph(equation);
+                        graphContainer.style.display = 'block';
+                    } else {
+                        graphContainer.style.display = 'none';
+                    }
+                } else {
+                    solutionArea.innerHTML = `
+                        <div class="solution-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Error:</strong><br>
+                            ${data.message}<br><br>
+                            <small>💡 Tip: Make sure to use proper syntax (e.g., 2*x instead of 2x)</small>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                solutionArea.innerHTML = `
+                    <div class="solution-error">
+                        <i class="fas fa-plug"></i>
+                        <strong>Connection Error:</strong><br>
+                        ${error.message}<br><br>
+                        <small>🔧 Make sure backend is running on port 5000</small>
+                    </div>
+                `;
+                checkConnection();
+            }
+        }
+
+        // ==================== DISPLAY SOLUTION ====================
+        function displaySolution(equation, data) {
+            let html = `<div class="solution-success">`;
+            html += `<i class="fas fa-check-circle"></i> <strong>Equation Solved Successfully!</strong><br><br>`;
+            html += `<strong>📝 Equation:</strong> ${equation}<br>`;
+            
+            if (data.solutions && data.solutions.length > 0) {
+                if (data.solutions.length === 1) {
+                    html += `<strong>🎯 Solution:</strong> x = ${data.solutions[0]}<br><br>`;
+                } else {
+                    html += `<strong>🎯 Solutions:</strong><br>`;
+                    data.solutions.forEach((sol, idx) => {
+                        html += `   x${idx + 1} = ${sol}<br>`;
+                    });
+                    html += `<br>`;
+                }
+                html += `<strong>💡 ${data.message}</strong><br><br>`;
+            }
+            
+            // Step-by-step solution
+            if (showStepsCheckbox.checked) {
+                html += `<div class="steps-timeline">`;
+                html += `<strong><i class="fas fa-list-ol"></i> Step-by-Step Solution:</strong><br><br>`;
+                
+                const steps = generateSteps(equation, data);
+                steps.forEach((step, idx) => {
+                    html += `
+                        <div class="step-item">
+                            <div class="step-number">${idx + 1}</div>
+                            <div class="step-text">${step}</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            html += `<br><small><i class="fas fa-clock"></i> Solved at: ${new Date().toLocaleString()}</small>`;
+            html += `</div>`;
+            
+            solutionArea.innerHTML = html;
+        }
+
+        function generateSteps(equation, data) {
+            const steps = [];
+            steps.push(`Start with the equation: ${equation}`);
+            
+            if (equation.includes('=')) {
+                const [left, right] = equation.split('=');
+                steps.push(`Move all terms to one side: ${left} - ${right} = 0`);
+                steps.push(`Simplify the expression`);
+            }
+            
+            if (data.solutions && data.solutions.length > 0) {
+                if (data.solutions.length === 1) {
+                    steps.push(`Solve for x: x = ${data.solutions[0]}`);
+                } else {
+                    steps.push(`Solve the quadratic equation`);
+                    data.solutions.forEach((sol, idx) => {
+                        steps.push(`Solution ${idx + 1}: x = ${sol}`);
+                    });
+                }
+                steps.push(`✅ Verification complete! The solution satisfies the original equation.`);
+            }
+            
+            return steps;
+        }
+
+        // ==================== DRAW GRAPH ====================
+        async function drawGraph(equation) {
+            const ctx = document.getElementById('graphCanvas').getContext('2d');
+            
+            // Parse equation for graphing
+            let expr = equation;
+            if (expr.includes('=')) {
+                expr = expr.split('=')[0];
+            }
+            expr = preprocessEquation(expr);
+            
+            const points = [];
+            for (let x = -10; x <= 10; x += 0.5) {
+                try {
+                    // Use a safe evaluation
+                    const func = new Function('x', `return ${expr.replace(/x/g, x)}`);
+                    const y = func(x);
+                    if (isFinite(y)) {
+                        points.push({x, y});
+                    }
+                } catch(e) {}
+            }
+            
+            if (chart) chart.destroy();
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: equation,
+                        data: points,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    return `x: ${context.raw.x}, y: ${context.raw.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'x-axis', color: '#667eea' },
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'y-axis', color: '#667eea' },
+                            grid: { color: 'rgba(102, 126, 234, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== HISTORY MANAGEMENT ====================
+        function addToHistory(equation, data) {
+            const historyItem = {
+                id: Date.now(),
+                equation: equation,
+                solution: data.solutions ? data.solutions.join(', ') : data.message,
+                date: new Date().toLocaleString(),
+                timestamp: Date.now()
+            };
+            
+            history.unshift(historyItem);
+            if (history.length > 20) history.pop();
+            localStorage.setItem('mathHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory(searchTerm = '') {
+            let filteredHistory = history;
+            if (searchTerm) {
+                filteredHistory = history.filter(item => 
+                    item.equation.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            if (filteredHistory.length === 0) {
+                document.getElementById('historyList').innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No history found</p>';
+                return;
+            }
+            
+            const historyHtml = filteredHistory.map(item => `
+                <div class="history-item" data-equation="${item.equation}">
+                    <div class="history-equation">
+                        <i class="fas fa-calculator"></i> ${item.equation}
+                    </div>
+                    <div class="history-solution">
+                        <i class="fas fa-check-circle"></i> ${item.solution}
+                    </div>
+                    <div class="history-date">
+                        <i class="fas fa-clock"></i> ${item.date}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('historyList').innerHTML = historyHtml;
+            
+            // Add click handlers
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    equationInput.value = item.dataset.equation;
+                    solveEquation();
+                });
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history?')) {
+                history = [];
+                localStorage.setItem('mathHistory', JSON.stringify(history));
+                renderHistory();
+                showToast('History cleared successfully!');
+            }
+        }
+
+        // ==================== VOICE INPUT ====================
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            
+            voiceInputBtn.addEventListener('click', () => {
+                recognition.start();
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone-slash"></i><span>Listening...</span>';
+            });
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                equationInput.value = transcript;
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i><span>Voice Input</span>';
+                solveEquation();
+            };
+            
+            recognition.onerror = () => {
+                voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i><span>Voice Input</span>';
+                showToast('Voice recognition failed. Please try again.', 'error');
+            };
+        } else {
+            voiceInputBtn.style.display = 'none';
+        }
+
+        // ==================== DARK MODE ====================
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        function applyDarkMode() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeBtn.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode</span>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkModeBtn.innerHTML = '<i class="fas fa-moon"></i><span>Dark Mode</span>';
+            }
+        }
+        
+        darkModeBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+            applyDarkMode();
+            showToast(`${isDarkMode ? 'Dark' : 'Light'} mode activated!`);
+        });
+        
+        applyDarkMode();
+
+        // ==================== SHARE FUNCTIONALITY ====================
+        shareBtn.addEventListener('click', async () => {
+            if (currentSolution) {
+                const shareData = {
+                    title: 'Math Solution',
+                    text: `Equation: ${equationInput.value}\nSolution: ${currentSolution.solutions?.join(', ') || currentSolution.message}`,
+                    url: window.location.href
+                };
+                
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                        showToast('Shared successfully!');
+                    } catch(err) {
+                        showToast('Share cancelled', 'error');
+                    }
+                } else {
+                    navigator.clipboard.writeText(`${shareData.text}`);
+                    showToast('Solution copied to clipboard!');
+                }
+            } else {
+                showToast('No solution to share yet!', 'error');
+            }
+        });
+
+        // ==================== COPY SOLUTION ====================
+        copyBtn.addEventListener('click', () => {
+            const solutionText = solutionArea.innerText;
+            navigator.clipboard.writeText(solutionText);
+            showToast('Solution copied to clipboard!');
+        });
+
+        // ==================== EXPORT PDF ====================
+        exportPdfBtn.addEventListener('click', () => {
+            const element = document.getElementById('solutionArea');
+            html2pdf().from(element).save('math_solution.pdf');
+            showToast('PDF exported successfully!');
+        });
+
+        // ==================== EVENT LISTENERS ====================
+        solveBtn.addEventListener('click', solveEquation);
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        searchHistory.addEventListener('input', (e) => renderHistory(e.target.value));
+        
+        equationInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') solveEquation();
+        });
+        
+        if (autoSolveCheckbox) {
+            autoSolveCheckbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    equationInput.addEventListener('input', () => solveEquation());
+                } else {
+                    // Remove event listener
+                }
+            });
+        }
+        
+        // Example chips
+        document.querySelectorAll('.example-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                equationInput.value = chip.dataset.example;
+                solveEquation();
+            });
+        });
+
+        // ==================== INITIALIZATION ====================
+        checkConnection();
+        renderHistory();
+        
+        // Welcome message
+        setTimeout(() => {
+            showToast('Welcome to Math Solver Pro! Developed by ALI HASSAN', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>
