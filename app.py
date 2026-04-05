@@ -2,23 +2,21 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sympy as sp
 import sys
-import os
 
 print("Python version:", sys.version)
 print("Starting Math Solver Server...")
 
-# ✅ Connect frontend folder
+# Serve frontend folder
 app = Flask(__name__, static_folder="frontend", static_url_path="")
-CORS(app)
+CORS(app)  # Enable CORS
 
 # Create symbols
 x = sp.Symbol('x')
 y = sp.Symbol('y')
 
 # ==============================
-# ✅ FRONTEND ROUTES
+# FRONTEND ROUTES
 # ==============================
-
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
@@ -28,14 +26,12 @@ def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
 # ==============================
-# ✅ API ROUTES
+# API ROUTES
 # ==============================
-
 @app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health():
     if request.method == 'OPTIONS':
         return '', 200
-
     return jsonify({
         'status': 'healthy',
         'message': 'Math Solver API is running!',
@@ -46,7 +42,6 @@ def health():
 def solve():
     if request.method == 'OPTIONS':
         return '', 200
-
     try:
         data = request.json
         print("Received request:", data)
@@ -72,26 +67,21 @@ def solve():
         })
 
 # ==============================
-# ✅ SOLVER FUNCTION
+# SOLVER FUNCTION
 # ==============================
-
 def solve_equation(equation):
     try:
         print(f"Solving: {equation}")
-
-        # Parse equation
         if '=' in equation:
             left, right = equation.split('=')
             expr = sp.sympify(left) - sp.sympify(right)
         else:
             expr = sp.sympify(equation)
 
-        # Solve for x
         solutions = sp.solve(expr, x)
 
         if solutions:
             solution_strs = [str(sol) for sol in solutions]
-
             return {
                 'success': True,
                 'type': 'equation',
@@ -115,19 +105,13 @@ def solve_equation(equation):
         }
 
 # ==============================
-# ✅ MAIN
+# MAIN (Local Testing Only)
 # ==============================
-
 if __name__ == '__main__':
-    # Local testing only
-    print("=" * 50)
+    print("="*50)
     print("Math Solver API Server (Local)")
-    print("=" * 50)
-    print("Open in browser: http://127.0.0.1:5000")
-    print("Health check: http://127.0.0.1:5000/api/health")
-    print("=" * 50)
+    print("="*50)
+    app.run(debug=True)  # Do NOT set host or port for Vercel
 
-    app.run(debug=True)  # Let Flask choose host and port automatically
-
-# ✅ For deployment (Vercel / Render etc.)
+# ✅ For deployment (Vercel / Render / etc.)
 handler = app
