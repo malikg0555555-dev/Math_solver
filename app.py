@@ -62,3 +62,9 @@ if __name__ == '__main__':
 
 # ✅ For deployment (Vercel / Render / etc.)
 handler = app
+if __name__ == '__main__':
+    # Change ye line
+    # app.run(debug=True)
+    
+    # Is line se replace karo
+    app.run(host='0.0.0.0', port=5000, debug=True)
